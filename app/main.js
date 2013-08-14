@@ -20,13 +20,29 @@ require(['jquery', 'uritemplate'], function ($, uritemplate) {
     }
     
     function disableTemplateInputs(form, template) {
+        var inputs = [];
+
         for(var i=0; i<template.expressions.length; i++) {
             var expr = template.expressions[i];
 
             if ('templateText' in expr) {
-                form.find('input[name="' + expr.templateText + '"]').attr("disabled", "disabled");
+                var input = form.find('input[name="' + expr.templateText + '"]');
+                if (input)
+                {
+                    input.attr("disabled", "disabled");
+                    inputs.push(input);
+                }
             }
         }
+
+        // in cases where the form submission does not lead to a new page,
+        // such as when downloading a file, re-enable the inputs after a tick.
+        window.setTimeout(function() {
+            for (var i=0; i<inputs.length; i++)
+            {
+                inputs[i].removeAttr("disabled");
+            }
+        }, 1000);
     }
 
     function submitForm(e) {

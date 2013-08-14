@@ -2,7 +2,7 @@
     baseUrl: 'app',
     name: 'vendor/almond',
     include: 'main',
-    out: 'build/apihelper.min.js',
+    out: 'build/formtemplate.min.js',
     wrap: true,
     paths: {
         'jquery': 'vendor/jquery-2.0.3.min',

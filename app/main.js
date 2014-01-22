@@ -47,6 +47,9 @@ require(['jquery', 'uritemplate'], function ($, uritemplate) {
 
     function submitForm(e) {
         var form = $(this);
+
+        $('.formtemplate').remove();
+
         var action = form.attr("action");
 
         var template = uritemplate.parse(action);
@@ -55,7 +58,30 @@ require(['jquery', 'uritemplate'], function ($, uritemplate) {
 
         var expand = template.expand(params);
 
-        console.log(action, '=>', expand);
+        var method = form.attr("method") || "GET";
+
+        console.log(method, action, '=>', expand);
+
+        if (method !== "GET" && method !== "POST") {
+            $.ajax(expand, {
+                data: params,
+                type: method,
+                success: function(content, status, request) {
+                    var text = request.status + ' ' + request.statusText;
+                    if (content) {
+                        text += ': ' + content;
+                    }
+
+                    form.append('<div class="formtemplate">' + text + '</div>');
+                },
+                error: function(request, status, error) {
+                    form.append('<div class="formtemplate error">' + request.status + ' ' + error + '</div>');
+                }
+            });
+
+            e.preventDefault();
+            return false;
+        }
 
         form.attr("action", expand);
 
